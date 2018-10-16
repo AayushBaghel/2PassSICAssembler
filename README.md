@@ -17,10 +17,12 @@
     3. Data Module, contains data for assembler class
     
 ### Datastructres
-    All structures are dictionaries(hashes) with a unique key value pair
-    1. Symbol Table, symbol LC pair
-    2. Opcode Table, Opcode and type/binary pair
-    3. Literal Table, literal mirror dictionary
+   
+    1. Symbol Table, symbol LC pair, dictionary(hashes) with a unique key value pair
+    2. Opcode Table, Opcode and type/binary pair, dictionary(hashes) with a unique key value pair
+    3. Literal Table, literal mirror dictionary, a unique list(set)
+    4. Location Counter, a simple binary counter
+    
 ### Passes
 #### Pass 1
     Generates the Symbol/Literal Table 
