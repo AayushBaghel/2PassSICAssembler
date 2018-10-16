@@ -24,7 +24,7 @@
     4. Location Counter, a simple binary counter
     
 ### Passes
-![](2pass.jpg)
+![](2pass.png)
 #### Pass 1
     Generates the Symbol/Literal Table 
 #### Pass 2
