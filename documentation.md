@@ -1,13 +1,13 @@
-Documentation
+## Documentation
 
-12bit Arch
+# 12bit Arch
 
-	0000			00000000
+	0000		00000000
 	4 bit Opcode	12 bit Operand
 
 ----------------------------------------------
 
-List of Opcodes in order
+# List of Opcodes in order
 
 Opcodes 	Assembly
 0000		CLA
@@ -26,7 +26,7 @@ Opcodes 	Assembly
 
 ----------------------------------------------
 
-Registors
+# Registors
 ACC
 R1
 R2
@@ -34,7 +34,7 @@ R2
 
 ----------------------------------------------
 
-Error Reporting
+# Error Reporting
 
 Empty Source
 Duplicate label
