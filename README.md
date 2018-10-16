@@ -24,7 +24,11 @@
     4. Location Counter, a simple binary counter
     
 ### Passes
+![](2pass.jpg)
 #### Pass 1
     Generates the Symbol/Literal Table 
 #### Pass 2
     Generates the Machine Code Binary
+    
+### Biblography
+System Software, Leland L. Beck
