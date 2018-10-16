@@ -27,20 +27,20 @@
 ----------------------------------------------
 
 # Registors
-ACC
-R1
-R2
+	ACC
+	R1
+	R2
 
 
 ----------------------------------------------
 
 # Error Reporting
 
-Empty Source
-Duplicate label
-Invalid Opcode
-Directiveless code
-Undefined Symbol
+	Empty Source
+	Duplicate label
+	Invalid Opcode
+	Directiveless code
+	Undefined Symbol
 
 ----------------------------------------------
 
