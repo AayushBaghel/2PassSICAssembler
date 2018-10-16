@@ -34,11 +34,15 @@ R2
 
 ----------------------------------------------
 
-Errors
+Error Reporting
 
+Empty Source
+Duplicate label
+Invalid Opcode
+Directiveless code
+Undefined Symbol
 
 ----------------------------------------------
 
-'''
 
 
