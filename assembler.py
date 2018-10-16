@@ -7,7 +7,6 @@ Author: Harsh Bandhey
 
 
 class Assembler:
-	## from tables import *
 
 	def __init__(self, opcode_table,symbol_table):
 		self.source=""
@@ -26,14 +25,12 @@ class Assembler:
 		self.source = source
 		self.source = source.split('\n')
 		if self.source==['']:
-			raise AssertionError
-		## print(self.source)
+			raise AssertionError('Source file empty')
 
 	def pass1(self):
 		while self.iscomment(self.source[self.spoint]):
 			self.spoint += 1
 		label,opcode,operand = self.breakup(self.source[self.spoint])
-		## print(label,opcode,operand)
 		if opcode.lower() == "start":
 			if operand!="":
 				self.location_counter = int(operand)
@@ -57,10 +54,11 @@ class Assembler:
 					self.error_list.append(("duplicate label",self.spoint))
 			if opcode.lower() in self.opcode_table.keys():
 				if self.opcode_table[opcode]=="dl":
-					self.location_counter += 1
-				else:
-					self.error_flag = True
-					self.error_list.append(("invalid opcode",self.spoint))
+					self.symbol_table[label] = self.location_counter
+				self.location_counter += 1
+			else:
+				self.error_flag = True
+				self.error_list.append(("invalid opcode",self.spoint))
 			self.intermediate.append(self.source[self.spoint])
 			self.spoint += 1
 			if self.spoint==len(self.source):
@@ -94,6 +92,7 @@ class Assembler:
 					if operand in self.symbol_table.keys():
 						bin2 = self.binandpad(self.symbol_table[operand])
 					else:
+						print(operand)
 						bin2 = self.binandpad(0)
 						self.error_flag = True
 						self.error_list.append(("undefined symbol",ipoint))
@@ -125,7 +124,7 @@ class Assembler:
 
 	def breakup(self,text):
 		text = text.split(" ")
-		if text[0] not in opcode_table.keys():
+		if text[0] not in self.opcode_table.keys():
 			label = text[0].strip(":")
 			try:
 				opcode = text[1]
@@ -176,9 +175,16 @@ class Assembler:
 		f.write(text)
 		f.close()
 
+	def print_status(self):
+		if self.error_flag == False:
+			print("Success output generated with no errors")
+		else:
+			print("Error in process, printing error stack")
+			for i in self.error_list:
+				print(i)
+
 
 if __name__=="__main__":
-	## from assembler import *
 	from data import *
 	import argparse
 
@@ -196,6 +202,7 @@ if __name__=="__main__":
 	if args.output:
 		output = args.output
 
-	assembler = Assembler(symbol_table,reg_table)
+	assembler = Assembler(opcode_table,reg_table)
 	assembler.assemble(readfile(inp))
 	assembler.output()
+	assembler.print_status()

@@ -1,7 +1,7 @@
 start 10
-dc a
+a dc
 inp a
-dc b
+b dc
 inp b
 lac a
 add b

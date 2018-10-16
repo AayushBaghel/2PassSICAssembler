@@ -24,7 +24,7 @@ literal_table = {
 	
 }
 
-error_type = []
+error_type = ["invalid opcode","undefined symbol"]
 
 error_list = list()
 
