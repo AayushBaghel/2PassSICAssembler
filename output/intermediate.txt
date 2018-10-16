@@ -1,0 +1,10 @@
+start 10
+a dc
+inp a
+b dc
+inp b
+lac a
+add b
+sac a
+dsp b
+end

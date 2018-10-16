@@ -1,0 +1,17 @@
+add	0011
+inp	1000
+dc	dl
+ds	dl
+end	ad
+brp	0111
+start	ad
+brz	0101
+sac	0010
+lac	0001
+brn	0110
+stp	1100
+cla	0000
+dsp	1001
+div	1011
+mul	1010
+sub	0100
