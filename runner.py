@@ -20,6 +20,7 @@ if args.input:
 if args.output:
 	output = args.output
 
-assembler = Assembler(symbol_table,reg_table)
+assembler = Assembler(opcode_table,reg_table)
 assembler.assemble(readfile(inp))
 assembler.output()
+assembler.print_status()
