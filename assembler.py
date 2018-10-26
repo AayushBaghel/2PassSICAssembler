@@ -1,7 +1,7 @@
 
 '''
 Assembler Class Module
-for 12bit SIC 2 Pass assembler without JSR and Macro Functionalitiy
+for 12bit SIC 2 Pass assembler
 Author: Harsh Bandhey
 '''
 
@@ -13,6 +13,10 @@ class Assembler:
 		self.spoint=0
 		self.opcode_table = opcode_table
 		self.symbol_table = symbol_table
+		self.literal_table = dict()
+		# self.macro_table = dict()
+		# self.proc_table = dict()
+		# self.macro_binary = dict()
 		self.location_counter = 0
 		self.error_list = list()
 		self.error_flag = False
@@ -43,6 +47,7 @@ class Assembler:
 				self.spoint += 1
 		label,opcode,operand = self.breakup(self.source[self.spoint])
 		while opcode.lower()!="end":
+			## print(self.source[self.spoint],self.spoint)
 			if self.iscomment(self.source[self.spoint]):
 				self.spoint += 1
 				continue
@@ -54,7 +59,17 @@ class Assembler:
 					self.error_list.append(("duplicate label",self.spoint))
 			if opcode.lower() in self.opcode_table.keys():
 				if self.opcode_table[opcode]=="dl":
-					self.symbol_table[label] = self.location_counter
+					if operand!="":
+						if '=' in operand:
+							self.literal_table[label] = [self.location_counter,operand]
+						else:
+							self.symbol_table[label] = self.location_counter
+					else:	
+						self.symbol_table[label] = self.location_counter
+				elif self.opcode_table[opcode]=="macro":
+					self.readmacro()
+				elif self.opcode_table[opcode] == "proc":
+					self.readproc()
 				self.location_counter += 1
 			else:
 				self.error_flag = True
@@ -84,21 +99,38 @@ class Assembler:
 			if self.iscomment(self.intermediate[ipoint]):
 				ipoint+=1
 				continue
-			if self.opcode_table[opcode]=="dl":
-				pass
-			elif opcode in self.opcode_table.keys():
-				bin1 = self.opcode_table[opcode]
-				if operand != "":
-					if operand in self.symbol_table.keys():
-						bin2 = self.binandpad(self.symbol_table[operand])
+			bin1,bin2="",""
+			if opcode in self.opcode_table.keys():
+				if self.opcode_table[opcode]=="dl":
+					if operand in self.literal_table.keys():
+						bin1 = "1111"
+						bin2 = self.binandpad(self.literal_table[operand][1])
 					else:
-						print(operand)
-						bin2 = self.binandpad(0)
-						self.error_flag = True
-						self.error_list.append(("undefined symbol",ipoint))
+						pass
+				elif self.opcode_table[opcode]=="jsr":
+					pass
 				else:
-					bin2 = self.binandpad(0)
-				self.final.append(bin1+bin2)
+					bin1 = self.opcode_table[opcode]
+					if operand != "":
+						if operand in self.symbol_table.keys():
+							bin2 = self.binandpad(self.symbol_table[operand])
+						elif operand in self.literal_table.keys():
+							bin2 = self.binandpad(self.literal_table[operand][0])
+						else:
+							if '=' in operand:
+								print(operand)
+								bin2 = self.binandpad(0)
+								self.error_flag = True
+								self.error_list.append(("undefined litera",ipoint))
+							else:
+								print(operand)
+								bin2 = self.binandpad(0)
+								self.error_flag = True
+								self.error_list.append(("undefined symbol",ipoint))
+					else:
+						bin2 = self.binandpad(0)
+				if bin1 or bin2:
+					self.final.append(bin1+bin2)
 			else:
 				self.error_flag = True
 				self.error_list.append(("invalid opcode",ipoint))
@@ -143,6 +175,14 @@ class Assembler:
 				operand = ""
 		return label,opcode,operand
 
+	def readmacro(self):
+		## omitted
+		pass
+
+	def readproc(self):
+		## omitted
+		pass
+
 	def binandpad(self,num,leng=8):
 		num = str(bin(int(num)))[2:]
 		while len(num) < leng:
@@ -150,7 +190,7 @@ class Assembler:
 		return num
 
 
-	def output(self):
+	def output(self,output):
 		temp = ""
 		for i in self.symbol_table.keys():
 			temp+=i+'\t'+str(self.binandpad(self.symbol_table[i]))+'\n'
@@ -160,6 +200,10 @@ class Assembler:
 			temp+=i+'\t'+str(self.opcode_table[i])+'\n'
 		self.save('output/opcode_table.txt',temp)
 		temp=""
+		for i in self.literal_table.keys():
+			temp+=i+'\t'+str(self.literal_table[i][0])+'\t'+str(self.literal_table[i][1])+'\n'
+		self.save('output/literal_table.txt',temp)
+		temp=""
 		for i in self.intermediate:
 			temp+=i+'\n'
 		self.save('output/intermediate.txt',temp)
@@ -167,7 +211,7 @@ class Assembler:
 		for i in self.final:
 			temp+=i+'\n'
 		self.save('output/output.txt',temp)
-		self.save('output.txt',temp)
+		self.save(output,temp)
 
 		
 	def save(self,loc,text):
@@ -181,7 +225,7 @@ class Assembler:
 		else:
 			print("Error in process, printing error stack")
 			for i in self.error_list:
-				print(i)
+				print(i[0],"in line",i[1])
 
 
 if __name__=="__main__":
@@ -190,7 +234,7 @@ if __name__=="__main__":
 
 	parser = argparse.ArgumentParser(description='12 bit SIC assmebler')
 	parser.add_argument('-i','--input', help='assembly file location')
-	parser.add_argument('-o','--output', help='output file location')
+	parser.add_argument('-o','--output', help='output file location (only obj)')
 	parser.add_argument('-op','--opcode', help='opcode file location')
 	args = parser.parse_args()
 
@@ -201,8 +245,10 @@ if __name__=="__main__":
 		inp = args.input
 	if args.output:
 		output = args.output
+	if args.opcode:
+		read_opcode_from_file(args.opcode)
 
 	assembler = Assembler(opcode_table,reg_table)
 	assembler.assemble(readfile(inp))
-	assembler.output()
+	assembler.output(output)
 	assembler.print_status()

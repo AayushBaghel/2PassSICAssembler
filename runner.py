@@ -8,7 +8,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description='12 bit SIC assmebler')
 parser.add_argument('-i','--input', help='assembly file location')
-parser.add_argument('-o','--output', help='output file location')
+parser.add_argument('-o','--output', help='output file location (only obj)')
 parser.add_argument('-op','--opcode', help='opcode file location')
 args = parser.parse_args()
 
@@ -19,8 +19,10 @@ if args.input:
 	inp = args.input
 if args.output:
 	output = args.output
+if args.opcode:
+	read_opcode_from_file(args.opcode)
 
 assembler = Assembler(opcode_table,reg_table)
 assembler.assemble(readfile(inp))
-assembler.output()
+assembler.output(output)
 assembler.print_status()
